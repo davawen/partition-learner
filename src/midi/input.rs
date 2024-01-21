@@ -13,7 +13,7 @@ pub struct ResMidiInputConnection {
     reciever: SyncCell<mpsc::Receiver<RecNote>>
 }
 
-pub fn create_midi_input(mut commands: Commands) {
+pub fn create_midi_input() -> ResMidiInputConnection {
     let midi_in = MidiInput::new("My Test Output")
         .expect("couldn't create output");
 
@@ -65,10 +65,10 @@ pub fn create_midi_input(mut commands: Commands) {
         }
     }, sender).unwrap();
 
-    commands.insert_resource(ResMidiInputConnection {
+    ResMidiInputConnection {
         conn: SyncCell::new(connection),
         reciever: SyncCell::new(reciever)
-    });
+    }
 }
 
 #[derive(Clone, Copy, Event)]

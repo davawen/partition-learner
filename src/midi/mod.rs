@@ -20,9 +20,11 @@ pub struct MidiPlugin {
 impl Plugin for MidiPlugin {
     fn build(&self, app: &mut App) {
         if self.input {
+            let res = create_midi_input();
+
             app
                 .add_event::<RecNote>()
-                .add_systems(Startup, create_midi_input)
+                .insert_resource(res)
                 .add_systems(FixedUpdate, bridge_midi_input_channel_event);
         }
 

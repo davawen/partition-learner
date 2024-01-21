@@ -44,8 +44,6 @@ pub fn create_midi_output(mut commands: Commands) {
 
 #[derive(Clone, Copy, Event)]
 pub struct SendNote {
-    pub octave: u8,
-    /// available range: 0..=11
     pub key: u8,
     /// available range: 0..=15
     pub channel: u8,
@@ -58,15 +56,12 @@ pub fn midi_output_play_notes(mut notes: EventReader<SendNote>, mut connection: 
     for &note in notes.read() {
         const NOTE_ON_MSG: u8 = 0x90;
         const NOTE_OFF_MSG: u8 = 0x80;
-        const VELOCITY: u8 = 0x64;
 
         let msg = match note.kind {
             NoteKind::Play => NOTE_ON_MSG,
             NoteKind::Stop => NOTE_OFF_MSG
         };
 
-        let value = note.octave*12 + note.key;
-
-        connection.0.get().send(&[msg + note.channel, value, note.velocity]).expect("failed to send midi message");
+        connection.0.get().send(&[msg + note.channel, note.key, note.velocity]).expect("failed to send midi message");
     }
 }
