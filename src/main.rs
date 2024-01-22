@@ -53,10 +53,6 @@ fn play_part(mut player: Query<(&Partition, &mut Player)>, time: Res<Time<Real>>
 
     for (partition, mut player) in &mut player {
         for (clef, (timer, index)) in partition.clefs.iter().zip(player.0.iter_mut()) {
-            if *index >= clef.figures.len() {
-                *index = 0;
-            }
-
             timer.tick(time.delta());
             if timer.finished() {
                 // stop previous notes
@@ -74,6 +70,10 @@ fn play_part(mut player: Query<(&Partition, &mut Player)>, time: Res<Time<Real>>
                             }
                         }
                     }
+                }
+
+                if *index >= clef.figures.len() {
+                    *index = 0;
                 }
 
                 let figure = &clef.figures[*index];
